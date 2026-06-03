@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusCore Systems - Logística y Optimización</title>
+    <meta name="description" content="Plataforma Dinámica de Logística y Optimización de Talento para NexusCore Systems.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- jsPDF and autoTable for native text/vector PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <header class="no-print">
+        <h1>NEXUSCORE SYSTEMS</h1>
+        <p>Sistema Web Dinámico de Logística y Optimización de Talento</p>
+    </header>
+
+    <div id="pdf-content">
+        <!-- Letterhead (hidden on screen, visible on PDF) -->
+        <div id="pdf-header" style="display: none; text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 30px; color: #0f172a;">
+            <h1 style="color: #0ea5e9; font-size: 28px; margin: 0;">NEXUSCORE SYSTEMS</h1>
+            <p style="margin: 5px 0; font-size: 14px;">Reporte Estratégico de Operaciones y Logística</p>
+            <p style="margin: 0; font-size: 12px; color: #64748b;">Generado Automáticamente por NexusCore Systems</p>
+        </div>
+
+        <div class="container">
+            <!-- Setup Groq API -->
+            <section class="module no-print">
+                <div class="module-title">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Configuración del Sistema
+                </div>
+                <div class="groq-setup">
+                    <div class="form-group" style="flex: 1; margin: 0;">
+                        <label for="groq_api_key">Clave de Acceso al Servidor de Análisis</label>
+                        <input type="password" id="groq_api_key" placeholder="Ingrese clave secreta..." required>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Module I: Transport -->
+            <section class="module" id="module-transport">
+                <div class="module-title">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Parte I: Módulo Interactivo de Transporte (Cadena de Suministro)
+                </div>
+                
+                <div class="grid-controls no-print">
+                    <div class="form-group">
+                        <label for="trans_m">Orígenes (m)</label>
+                        <input type="number" id="trans_m" min="1" value="3">
+                    </div>
+                    <div class="form-group">
+                        <label for="trans_n">Destinos (n)</label>
+                        <input type="number" id="trans_n" min="1" value="4">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button onclick="app.generateTransportGrid()">Generar Matriz</button>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button class="secondary" onclick="app.loadTransportBaseCase()">Cargar Caso Base</button>
+                    </div>
+                </div>
+
+                <div id="transport-grid-container" class="table-responsive">
+                    <!-- Dynamic Grid will be injected here -->
+                </div>
+
+                <div id="transport-status" style="display:none;" class="status-bar"></div>
+
+                <div class="grid-controls no-print" style="margin-top: 1rem;">
+                    <button onclick="app.solveTransport()">Resolver Transporte</button>
+                </div>
+
+                <div id="transport-results" class="results-panel" style="display:none;">
+                    <h3>Resultados del Transporte</h3>
+                    <div id="transport-results-content"></div>
+                </div>
+            </section>
+
+            <!-- Module II: Assignment -->
+            <section class="module" id="module-assignment">
+                <div class="module-title">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Parte II: Módulo Interactivo de Asignación (Gestión de Talento)
+                </div>
+                
+                <div class="grid-controls no-print">
+                    <div class="form-group">
+                        <label for="assign_n">Tamaño (N x N)</label>
+                        <input type="number" id="assign_n" min="2" value="4">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button onclick="app.generateAssignGrid()">Generar Matriz</button>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button class="secondary" onclick="app.loadAssignBaseCase()">Cargar Caso Base</button>
+                    </div>
+                </div>
+
+                <div id="assign-grid-container" class="table-responsive">
+                    <!-- Dynamic Grid will be injected here -->
+                </div>
+
+                <div class="grid-controls no-print" style="margin-top: 1rem;">
+                    <button onclick="app.solveAssign()">Aplicar Método Húngaro</button>
+                </div>
+
+                <div id="assign-results" class="results-panel" style="display:none;">
+                    <h3>Pasos del Método Húngaro</h3>
+                    <div id="assign-results-content"></div>
+                </div>
+            </section>
+
+            <!-- Module III: Groq & PDF -->
+            <section class="module" id="module-analysis">
+                <div class="module-title">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Parte III: Reporte y Análisis Estratégico
+                </div>
+                
+                <div class="grid-controls no-print">
+                    <button class="action" onclick="app.optimizeAndAnalyze()">Generar Análisis Estratégico</button>
+                    <button class="secondary" onclick="app.exportPDF()" id="btn-export" style="display:none;">Exportar a PDF</button>
+                </div>
+
+                <div id="analysis-results" class="results-panel" style="display:none;">
+                    <h3>Informe Estratégico de Operaciones (COO)</h3>
+                    <div id="analysis-content" class="analysis-content"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
